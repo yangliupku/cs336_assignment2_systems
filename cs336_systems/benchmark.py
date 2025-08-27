@@ -126,7 +126,7 @@ def benchmark(
 
 if __name__ == "__main__":
     specs = get_model_specs()
-    device = "cpu"
+    device = "mps"
     for k, spec in specs.items():
         print(f"-------{k}-------")
         run = run_basic_lm_model(**spec, device=device, enable_backward=False)

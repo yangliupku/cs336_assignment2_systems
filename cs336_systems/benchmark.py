@@ -3,6 +3,64 @@ import torch
 from cs336_basics.nn_utils import cross_entropy
 import timeit
 import numpy as np
+from cs336_basics.optimizer import AdamW
+
+
+def get_model_specs():
+    common_spec = {
+        "vocab_size": 10000,
+        "context_length": 256,
+        "rope_theta": 10000,
+    }
+    return {
+        "small": {
+            **common_spec,
+            "d_model": 768,
+            "d_ff": 3072,
+            "num_layers": 12,
+            "num_heads": 12,
+        },
+        "medium": {
+            **common_spec,
+            "d_model": 1024,
+            "d_ff": 4096,
+            "num_layers": 24,
+            "num_heads": 16,
+        },
+        "large": {
+            **common_spec,
+            "d_model": 1280,
+            "d_ff": 5120,
+            "num_layers": 36,
+            "num_heads": 20,
+        },
+        "xl": {
+            **common_spec,
+            "d_model": 1600,
+            "d_ff": 6400,
+            "num_layers": 48,
+            "num_heads": 25,
+        },
+        "2.7B": {
+            **common_spec,
+            "d_model": 2560,
+            "d_ff": 10240,
+            "num_layers": 32,
+            "num_heads": 32,
+        },
+    }
+
+
+def get_model_parameter_count(model: torch.nn.Module):
+    num_params = 0
+    for k, v in model.named_parameters():
+        if "embedding" not in k:
+            print(k, v.shape, v.numel())
+            num_params += v.numel()
+        else:
+            print(k)
+    print("total_params (M)", num_params / 1e6)
+    return num_params
 
 
 def run_basic_lm_model(
@@ -26,6 +84,7 @@ def run_basic_lm_model(
         d_ff=d_ff,
         rope_theta=rope_theta,
     ).to(device)
+    opt = AdamW(params=model.parameters())
 
     inputs = torch.randint(0, vocab_size, (batch_size, context_length), device=device)
     lables = torch.randint(0, vocab_size, (batch_size, context_length), device=device)
@@ -33,15 +92,16 @@ def run_basic_lm_model(
     def run():
         logits = model(inputs)
         if enable_backward:
+            opt.zero_grad()
             loss = cross_entropy(logits, lables)
             loss.backward()
+            opt.step()
 
     return run
 
 
 def benchmark(
     run: callable,
-    description: str = "benchmarking",
     warmup_steps: int = 3,
     num_trials: int = 10,
     device: str = "cuda",
@@ -61,10 +121,20 @@ def benchmark(
         end = timeit.default_timer()
         elapsed_times.append((end - start) * 1000)
     elapsed_times = np.array(elapsed_times)
-    return elapsed_times.mean()
+    return elapsed_times.mean(), elapsed_times.std()
 
 
 if __name__ == "__main__":
-    run = run_basic_lm_model(device="mps")
-    t = benchmark(run, device="mps")
-    print(t)
+    specs = get_model_specs()
+    device = "cpu"
+    for k, spec in specs.items():
+        print(f"-------{k}-------")
+        run = run_basic_lm_model(**spec, device=device, enable_backward=False)
+        t = benchmark(run, device=device)
+        print("forward", t[0])
+        run = run_basic_lm_model(**spec, device=device, enable_backward=True)
+        t = benchmark(run, device=device)
+        print("forward-backward", t[0])
+    # spec = get_model_specs()["2.7B"]
+    # model = BasicsTransformerLM(**spec)
+    # get_model_parameter_count(model)

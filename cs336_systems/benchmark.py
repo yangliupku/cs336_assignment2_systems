@@ -1,9 +1,12 @@
+import pstats
 from cs336_basics.model import BasicsTransformerLM
 import torch
 from cs336_basics.nn_utils import cross_entropy
 import timeit
 import numpy as np
 from cs336_basics.optimizer import AdamW
+from torch.profiler import ProfilerActivity
+import cProfile
 
 
 def get_model_specs():
@@ -124,7 +127,7 @@ def benchmark(
     return elapsed_times.mean(), elapsed_times.std()
 
 
-if __name__ == "__main__":
+def benchmark_basic_lm_model():
     specs = get_model_specs()
     device = "mps"
     for k, spec in specs.items():
@@ -135,6 +138,40 @@ if __name__ == "__main__":
         run = run_basic_lm_model(**spec, device=device, enable_backward=True)
         t = benchmark(run, device=device)
         print("forward-backward", t[0])
-    # spec = get_model_specs()["2.7B"]
-    # model = BasicsTransformerLM(**spec)
-    # get_model_parameter_count(model)
+
+
+def cuda_profile(run: callable, num_warmups: int = 1, with_stack: bool = False):
+    # Warmup
+    for _ in range(num_warmups):
+        run()
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()  # Wait for CUDA threads to finish (important!)
+    # Run the code with the profiler
+    with torch.profiler.profile(
+        activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+        # Output stack trace for visualization
+        with_stack=with_stack,
+        # Needed to export stack trace for visualization
+        experimental_config=torch._C._profiler._ExperimentalConfig(verbose=True),
+    ) as prof:
+        run()
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()  # Wait for CUDA threads to finish (important!)
+    # Print out table
+    table = prof.key_averages().table(
+        sort_by="cuda_time_total", max_name_column_width=80, row_limit=25
+    )
+    return table
+
+
+def profile_basic_lm_model():
+    device = "cpu"
+    spec = get_model_specs()["medium"]
+    run = run_basic_lm_model(**spec, device=device, enable_backward=False)
+    # run cuda profiler
+    table = cuda_profile(run)
+    print(table)
+
+
+if __name__ == "__main__":
+    profile_basic_lm_model()

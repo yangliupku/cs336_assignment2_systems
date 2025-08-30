@@ -123,3 +123,239 @@ forward-backward [922.03254253 519.65327188 539.19908032 519.58310977 519.519872
 ```
 
 we can see without warmup, the first and third run with backward takes longer than normal. This behavior is repeatable.
+
+### Does context length change model size?
+
+No
+
+```
+-------context length = 256---------
+token_embeddings.weight
+layers.0.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.0.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.0.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.0.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.0.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.0.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.0.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.0.ln1.weight torch.Size([768]) 768
+layers.0.ln2.weight torch.Size([768]) 768
+layers.1.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.1.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.1.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.1.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.1.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.1.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.1.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.1.ln1.weight torch.Size([768]) 768
+layers.1.ln2.weight torch.Size([768]) 768
+layers.2.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.2.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.2.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.2.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.2.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.2.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.2.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.2.ln1.weight torch.Size([768]) 768
+layers.2.ln2.weight torch.Size([768]) 768
+layers.3.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.3.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.3.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.3.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.3.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.3.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.3.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.3.ln1.weight torch.Size([768]) 768
+layers.3.ln2.weight torch.Size([768]) 768
+layers.4.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.4.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.4.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.4.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.4.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.4.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.4.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.4.ln1.weight torch.Size([768]) 768
+layers.4.ln2.weight torch.Size([768]) 768
+layers.5.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.5.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.5.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.5.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.5.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.5.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.5.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.5.ln1.weight torch.Size([768]) 768
+layers.5.ln2.weight torch.Size([768]) 768
+layers.6.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.6.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.6.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.6.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.6.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.6.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.6.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.6.ln1.weight torch.Size([768]) 768
+layers.6.ln2.weight torch.Size([768]) 768
+layers.7.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.7.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.7.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.7.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.7.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.7.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.7.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.7.ln1.weight torch.Size([768]) 768
+layers.7.ln2.weight torch.Size([768]) 768
+layers.8.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.8.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.8.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.8.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.8.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.8.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.8.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.8.ln1.weight torch.Size([768]) 768
+layers.8.ln2.weight torch.Size([768]) 768
+layers.9.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.9.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.9.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.9.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.9.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.9.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.9.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.9.ln1.weight torch.Size([768]) 768
+layers.9.ln2.weight torch.Size([768]) 768
+layers.10.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.10.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.10.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.10.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.10.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.10.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.10.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.10.ln1.weight torch.Size([768]) 768
+layers.10.ln2.weight torch.Size([768]) 768
+layers.11.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.11.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.11.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.11.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.11.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.11.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.11.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.11.ln1.weight torch.Size([768]) 768
+layers.11.ln2.weight torch.Size([768]) 768
+ln_final.weight torch.Size([768]) 768
+lm_head.weight torch.Size([10000, 768]) 7680000
+total_params (M) 120.945408
+
+
+
+-------context length = 1024---------
+token_embeddings.weight
+layers.0.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.0.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.0.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.0.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.0.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.0.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.0.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.0.ln1.weight torch.Size([768]) 768
+layers.0.ln2.weight torch.Size([768]) 768
+layers.1.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.1.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.1.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.1.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.1.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.1.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.1.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.1.ln1.weight torch.Size([768]) 768
+layers.1.ln2.weight torch.Size([768]) 768
+layers.2.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.2.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.2.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.2.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.2.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.2.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.2.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.2.ln1.weight torch.Size([768]) 768
+layers.2.ln2.weight torch.Size([768]) 768
+layers.3.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.3.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.3.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.3.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.3.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.3.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.3.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.3.ln1.weight torch.Size([768]) 768
+layers.3.ln2.weight torch.Size([768]) 768
+layers.4.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.4.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.4.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.4.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.4.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.4.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.4.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.4.ln1.weight torch.Size([768]) 768
+layers.4.ln2.weight torch.Size([768]) 768
+layers.5.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.5.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.5.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.5.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.5.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.5.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.5.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.5.ln1.weight torch.Size([768]) 768
+layers.5.ln2.weight torch.Size([768]) 768
+layers.6.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.6.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.6.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.6.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.6.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.6.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.6.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.6.ln1.weight torch.Size([768]) 768
+layers.6.ln2.weight torch.Size([768]) 768
+layers.7.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.7.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.7.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.7.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.7.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.7.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.7.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.7.ln1.weight torch.Size([768]) 768
+layers.7.ln2.weight torch.Size([768]) 768
+layers.8.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.8.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.8.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.8.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.8.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.8.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.8.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.8.ln1.weight torch.Size([768]) 768
+layers.8.ln2.weight torch.Size([768]) 768
+layers.9.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.9.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.9.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.9.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.9.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.9.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.9.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.9.ln1.weight torch.Size([768]) 768
+layers.9.ln2.weight torch.Size([768]) 768
+layers.10.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.10.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.10.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.10.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.10.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.10.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.10.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.10.ln1.weight torch.Size([768]) 768
+layers.10.ln2.weight torch.Size([768]) 768
+layers.11.attn.q_proj.weight torch.Size([768, 768]) 589824
+layers.11.attn.k_proj.weight torch.Size([768, 768]) 589824
+layers.11.attn.v_proj.weight torch.Size([768, 768]) 589824
+layers.11.attn.output_proj.weight torch.Size([768, 768]) 589824
+layers.11.ffn.w1.weight torch.Size([3072, 768]) 2359296
+layers.11.ffn.w2.weight torch.Size([768, 3072]) 2359296
+layers.11.ffn.w3.weight torch.Size([3072, 768]) 2359296
+layers.11.ln1.weight torch.Size([768]) 768
+layers.11.ln2.weight torch.Size([768]) 768
+ln_final.weight torch.Size([768]) 768
+lm_head.weight torch.Size([10000, 768]) 7680000
+total_params (M) 120.945408
+```

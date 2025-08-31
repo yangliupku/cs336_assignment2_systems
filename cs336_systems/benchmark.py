@@ -1,4 +1,3 @@
-import pstats
 from cs336_basics.model import BasicsTransformerLM
 import torch
 from cs336_basics.nn_utils import cross_entropy
@@ -6,7 +5,7 @@ import timeit
 import numpy as np
 from cs336_basics.optimizer import AdamW
 from torch.profiler import ProfilerActivity
-import cProfile
+import torch.cuda.nvtx as nvtx
 
 
 def get_model_specs():
@@ -78,27 +77,34 @@ def run_basic_lm_model(
     enable_backward: bool = True,
     device: str = None,
 ) -> callable:
-    model = BasicsTransformerLM(
-        vocab_size=vocab_size,
-        context_length=context_length,
-        d_model=d_model,
-        num_layers=num_layers,
-        num_heads=num_heads,
-        d_ff=d_ff,
-        rope_theta=rope_theta,
-    ).to(device)
-    opt = AdamW(params=model.parameters())
+    with nvtx.range("define model"):
+        model = BasicsTransformerLM(
+            vocab_size=vocab_size,
+            context_length=context_length,
+            d_model=d_model,
+            num_layers=num_layers,
+            num_heads=num_heads,
+            d_ff=d_ff,
+            rope_theta=rope_theta,
+        ).to(device)
+    with nvtx.range("define optimizer"):
+        opt = AdamW(params=model.parameters())
 
-    inputs = torch.randint(0, vocab_size, (batch_size, context_length), device=device)
-    lables = torch.randint(0, vocab_size, (batch_size, context_length), device=device)
+    with nvtx.range("define data"):
+        inputs = torch.randint(0, vocab_size, (batch_size, context_length), device=device)
+        lables = torch.randint(0, vocab_size, (batch_size, context_length), device=device)
 
     def run():
-        logits = model(inputs)
+        with nvtx.range("forward"):
+            logits = model(inputs)
         if enable_backward:
             opt.zero_grad()
-            loss = cross_entropy(logits, lables)
-            loss.backward()
-            opt.step()
+            with nvtx.range("loss"):
+                loss = cross_entropy(logits, lables)
+            with nvtx.range("backward"):
+                loss.backward()
+            with nvtx.range("opt step"):
+                opt.step()
 
     return run
 
@@ -111,14 +117,16 @@ def benchmark(
 ):
     if device == "cuda":
         assert torch.cuda.is_available()
-    for i in range(warmup_steps):
-        run()
+    with nvtx.range("warm up"):
+        for i in range(warmup_steps):
+            run()
     if device == "cuda":
         torch.cuda.synchronize()
     elapsed_times = []
     for i in range(num_trials):
         start = timeit.default_timer()
-        run()
+        with nvtx.range(f"trail_{i}"):
+            run()
         if device == "cuda":
             torch.cuda.synchronize()
         end = timeit.default_timer()
@@ -174,4 +182,15 @@ def profile_basic_lm_model():
 
 
 if __name__ == "__main__":
-    profile_basic_lm_model()
+    specs = get_model_specs()
+    device = "cpu"
+    for k, spec in specs.items():
+        if k != "large":
+            continue
+        print(f"-------{k}-------")
+        # run = run_basic_lm_model(**spec, device=device, enable_backward=False)
+        # t = benchmark(run, device=device)
+        # print("forward", t[0])
+        run = run_basic_lm_model(**spec, device=device, enable_backward=True)
+        t = benchmark(run, device=device)
+        print("forward-backward", t[0])

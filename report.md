@@ -130,232 +130,81 @@ No
 
 ```
 -------context length = 256---------
-token_embeddings.weight
-layers.0.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.0.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.0.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.0.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.0.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.0.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.0.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.0.ln1.weight torch.Size([768]) 768
-layers.0.ln2.weight torch.Size([768]) 768
-layers.1.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.1.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.1.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.1.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.1.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.1.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.1.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.1.ln1.weight torch.Size([768]) 768
-layers.1.ln2.weight torch.Size([768]) 768
-layers.2.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.2.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.2.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.2.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.2.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.2.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.2.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.2.ln1.weight torch.Size([768]) 768
-layers.2.ln2.weight torch.Size([768]) 768
-layers.3.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.3.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.3.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.3.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.3.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.3.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.3.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.3.ln1.weight torch.Size([768]) 768
-layers.3.ln2.weight torch.Size([768]) 768
-layers.4.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.4.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.4.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.4.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.4.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.4.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.4.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.4.ln1.weight torch.Size([768]) 768
-layers.4.ln2.weight torch.Size([768]) 768
-layers.5.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.5.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.5.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.5.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.5.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.5.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.5.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.5.ln1.weight torch.Size([768]) 768
-layers.5.ln2.weight torch.Size([768]) 768
-layers.6.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.6.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.6.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.6.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.6.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.6.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.6.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.6.ln1.weight torch.Size([768]) 768
-layers.6.ln2.weight torch.Size([768]) 768
-layers.7.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.7.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.7.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.7.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.7.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.7.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.7.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.7.ln1.weight torch.Size([768]) 768
-layers.7.ln2.weight torch.Size([768]) 768
-layers.8.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.8.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.8.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.8.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.8.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.8.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.8.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.8.ln1.weight torch.Size([768]) 768
-layers.8.ln2.weight torch.Size([768]) 768
-layers.9.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.9.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.9.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.9.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.9.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.9.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.9.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.9.ln1.weight torch.Size([768]) 768
-layers.9.ln2.weight torch.Size([768]) 768
-layers.10.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.10.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.10.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.10.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.10.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.10.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.10.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.10.ln1.weight torch.Size([768]) 768
-layers.10.ln2.weight torch.Size([768]) 768
-layers.11.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.11.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.11.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.11.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.11.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.11.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.11.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.11.ln1.weight torch.Size([768]) 768
-layers.11.ln2.weight torch.Size([768]) 768
-ln_final.weight torch.Size([768]) 768
-lm_head.weight torch.Size([10000, 768]) 7680000
 total_params (M) 120.945408
-
 
 
 -------context length = 1024---------
-token_embeddings.weight
-layers.0.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.0.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.0.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.0.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.0.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.0.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.0.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.0.ln1.weight torch.Size([768]) 768
-layers.0.ln2.weight torch.Size([768]) 768
-layers.1.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.1.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.1.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.1.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.1.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.1.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.1.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.1.ln1.weight torch.Size([768]) 768
-layers.1.ln2.weight torch.Size([768]) 768
-layers.2.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.2.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.2.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.2.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.2.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.2.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.2.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.2.ln1.weight torch.Size([768]) 768
-layers.2.ln2.weight torch.Size([768]) 768
-layers.3.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.3.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.3.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.3.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.3.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.3.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.3.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.3.ln1.weight torch.Size([768]) 768
-layers.3.ln2.weight torch.Size([768]) 768
-layers.4.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.4.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.4.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.4.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.4.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.4.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.4.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.4.ln1.weight torch.Size([768]) 768
-layers.4.ln2.weight torch.Size([768]) 768
-layers.5.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.5.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.5.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.5.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.5.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.5.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.5.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.5.ln1.weight torch.Size([768]) 768
-layers.5.ln2.weight torch.Size([768]) 768
-layers.6.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.6.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.6.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.6.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.6.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.6.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.6.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.6.ln1.weight torch.Size([768]) 768
-layers.6.ln2.weight torch.Size([768]) 768
-layers.7.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.7.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.7.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.7.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.7.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.7.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.7.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.7.ln1.weight torch.Size([768]) 768
-layers.7.ln2.weight torch.Size([768]) 768
-layers.8.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.8.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.8.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.8.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.8.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.8.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.8.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.8.ln1.weight torch.Size([768]) 768
-layers.8.ln2.weight torch.Size([768]) 768
-layers.9.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.9.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.9.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.9.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.9.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.9.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.9.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.9.ln1.weight torch.Size([768]) 768
-layers.9.ln2.weight torch.Size([768]) 768
-layers.10.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.10.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.10.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.10.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.10.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.10.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.10.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.10.ln1.weight torch.Size([768]) 768
-layers.10.ln2.weight torch.Size([768]) 768
-layers.11.attn.q_proj.weight torch.Size([768, 768]) 589824
-layers.11.attn.k_proj.weight torch.Size([768, 768]) 589824
-layers.11.attn.v_proj.weight torch.Size([768, 768]) 589824
-layers.11.attn.output_proj.weight torch.Size([768, 768]) 589824
-layers.11.ffn.w1.weight torch.Size([3072, 768]) 2359296
-layers.11.ffn.w2.weight torch.Size([768, 3072]) 2359296
-layers.11.ffn.w3.weight torch.Size([3072, 768]) 2359296
-layers.11.ln1.weight torch.Size([768]) 768
-layers.11.ln2.weight torch.Size([768]) 768
-ln_final.weight torch.Size([768]) 768
-lm_head.weight torch.Size([10000, 768]) 7680000
 total_params (M) 120.945408
 ```
+
+## Profiling
+
+### PyTorch Profiler Results for Large with forward
+
+| Name                                  | Self CPU % | Self CPU  | CPU total % | CPU total | CPU time avg | Self CUDA | Self CUDA % | CUDA total | CUDA time avg | # of Calls |
+| ------------------------------------- | ---------- | --------- | ----------- | --------- | ------------ | --------- | ----------- | ---------- | ------------- | ---------- |
+| aten::einsum                          | 2.65%      | 3.264ms   | 19.43%      | 23.940ms  | 73.661us     | 0.000us   | 0.00%       | 123.479ms  | 379.934us     | 325        |
+| aten::bmm                             | 3.70%      | 4.560ms   | 6.23%       | 7.680ms   | 23.631us     | 118.812ms | 86.07%      | 122.976ms  | 378.388us     | 325        |
+| ampere_sgemm_128x64_tn                | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 83.281ms  | 60.33%      | 83.281ms   | 383.783us     | 217        |
+| ampere_sgemm_32x128_tn                | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 29.878ms  | 21.64%      | 29.878ms   | 829.938us     | 36         |
+| aten::mul                             | 2.56%      | 3.159ms   | 4.33%       | 5.338ms   | 10.549us     | 6.847ms   | 4.96%       | 6.885ms    | 13.606us      | 506        |
+| cudaLaunchKernel                      | 7.07%      | 8.717ms   | 14.80%      | 18.237ms  | 8.853us      | 0.000us   | 0.00%       | 4.689ms    | 2.276us       | 2060       |
+| Unrecognized                          | 7.73%      | 9.520ms   | 7.73%       | 9.520ms   | 226.660us    | 4.689ms   | 3.40%       | 4.689ms    | 111.652us     | 42         |
+| elementwise_kernel<128, 2, ...>       | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 4.232ms   | 3.07%       | 4.232ms    | 9.750us       | 434        |
+| ampere_sgemm_128x128_nn               | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 3.734ms   | 2.71%       | 3.734ms    | 103.734us     | 36         |
+| vectorized_elementwise_kernel<4, ...> | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 2.616ms   | 1.89%       | 2.616ms    | 36.329us      | 72         |
+| aten::where                           | 0.32%      | 394.998us | 1.32%       | 1.622ms   | 22.524us     | 1.160ms   | 0.84%       | 2.384ms    | 33.113us      | 72         |
+| aten::div                             | 0.43%      | 532.896us | 0.75%       | 926.758us | 12.872us     | 2.093ms   | 1.52%       | 2.225ms    | 30.899us      | 72         |
+| elementwise_kernel<128, 2, ...>       | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 1.917ms   | 1.39%       | 1.917ms    | 8.876us       | 216        |
+| ampere_sgemm_128x128_tn               | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 1.698ms   | 1.23%       | 1.698ms    | 47.155us      | 36         |
+| aten::sub                             | 0.54%      | 661.797us | 0.82%       | 1.015ms   | 9.396us      | 1.288ms   | 0.93%       | 1.288ms    | 11.927us      | 108        |
+| elementwise_kernel<128, 2, ...>       | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 1.190ms   | 0.86%       | 1.190ms    | 33.063us      | 36         |
+| vectorized_elementwise_kernel<4, ...> | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 1.184ms   | 0.86%       | 1.184ms    | 5.480us       | 216        |
+| elementwise_kernel<128, 2, ...>       | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 1.160ms   | 0.84%       | 1.160ms    | 32.216us      | 36         |
+| aten::concatenate                     | 0.04%      | 54.514us  | 2.01%       | 2.478ms   | 34.418us     | 0.000us   | 0.00%       | 1.156ms    | 16.062us      | 72         |
+| aten::cat                             | 1.16%      | 1.433ms   | 1.97%       | 2.424ms   | 33.661us     | 1.156ms   | 0.84%       | 1.156ms    | 16.062us      | 72         |
+| aten::add                             | 1.06%      | 1.300ms   | 1.66%       | 2.045ms   | 9.422us      | 1.022ms   | 0.74%       | 1.022ms    | 4.708us       | 217        |
+| aten::max                             | 0.32%      | 390.292us | 0.42%       | 520.597us | 14.461us     | 984.770us | 0.71%       | 984.770us  | 27.355us      | 36         |
+| reduce_kernel<512, 1, ...>            | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 984.770us | 0.71%       | 984.770us  | 27.355us      | 36         |
+| elementwise_kernel<128, 2, ...>       | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 982.851us | 0.71%       | 982.851us  | 27.301us      | 36         |
+| vectorized_elementwise_kernel<4, ...> | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 902.497us | 0.65%       | 902.497us  | 25.069us      | 36         |
+
+#### Summary
+
+- **Self CPU time total:** 123.209ms
+- **Self CUDA time total:** 138.042ms
+
+### PyTorch Profiler Results for Large with forward and backward
+
+| Name                                                 | Self CPU % | Self CPU  | CPU total % | CPU total | CPU time avg | Self CUDA | Self CUDA % | CUDA total | CUDA time avg | # of Calls |
+| ---------------------------------------------------- | ---------- | --------- | ----------- | --------- | ------------ | --------- | ----------- | ---------- | ------------- | ---------- |
+| aten::bmm                                            | 1.41%      | 13.378ms  | 47.52%      | 450.567ms | 462.120us    | 356.699ms | 70.02%      | 360.764ms  | 370.014us     | 975        |
+| autograd::engine::evaluate_function: BmmBackward0    | 0.20%      | 1.917ms   | 4.40%       | 41.682ms  | 128.252us    | 0.000us   | 0.00%       | 238.175ms  | 732.845us     | 325        |
+| BmmBackward0                                         | 0.15%      | 1.436ms   | 4.19%       | 39.765ms  | 122.353us    | 0.000us   | 0.00%       | 238.175ms  | 732.845us     | 325        |
+| aten::einsum                                         | 0.36%      | 3.431ms   | 45.30%      | 429.518ms | 1.322ms      | 0.000us   | 0.00%       | 123.077ms  | 378.700us     | 325        |
+| Optimizer.step#AdamW.step                            | 1.25%      | 11.823ms  | 15.08%      | 142.990ms | 142.990ms    | 0.000us   | 0.00%       | 116.583ms  | 116.583ms     | 1          |
+| Optimizer.step#AdamW.step                            | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 89.233ms  | 17.52%      | 89.233ms   | 89.233ms      | 1          |
+| ampere_sgemm_128x64_tn                               | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 83.098ms  | 16.31%      | 83.098ms   | 382.939us     | 217        |
+| aten::mul                                            | 1.62%      | 15.402ms  | 10.40%      | 98.571ms  | 27.704us     | 50.138ms  | 9.84%       | 60.563ms   | 17.022us      | 3558       |
+| ampere_sgemm_32x32_sliced1x4_nt                      | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 56.182ms  | 11.03%      | 56.182ms   | 780.304us     | 72         |
+| ampere_sgemm_128x32_sliced1x4_nn                     | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 55.582ms  | 10.91%      | 55.582ms   | 761.398us     | 73         |
+| cudaLaunchKernel                                     | 14.92%     | 141.412ms | 25.17%      | 238.616ms | 21.811us     | 0.000us   | 0.00%       | 37.815ms   | 3.457us       | 10940      |
+| Unrecognized                                         | 22.83%     | 216.432ms | 22.83%      | 216.432ms | 95.261us     | 37.815ms  | 7.42%       | 37.815ms   | 16.644us      | 2272       |
+| ampere_sgemm_128x128_nn                              | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 34.336ms  | 6.74%       | 34.336ms   | 317.929us     | 108        |
+| vectorized_elementwise_kernel<4, CUDAFunctor_add...> | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 33.784ms  | 6.63%       | 33.784ms   | 16.934us      | 1995       |
+| vectorized_elementwise_kernel<4, AUnaryFunctor...>   | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 29.808ms  | 5.85%       | 29.808ms   | 14.140us      | 2108       |
+| ampere_sgemm_32x128_tn                               | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 29.781ms  | 5.85%       | 29.781ms   | 827.239us     | 36         |
+| ampere_sgemm_64x32_sliced1x4_nt                      | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 29.528ms  | 5.80%       | 29.528ms   | 205.053us     | 144        |
+| ampere_sgemm_32x128_nt                               | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 28.628ms  | 5.62%       | 28.628ms   | 773.726us     | 37         |
+| ampere_sgemm_128x32_nn                               | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 28.137ms  | 5.52%       | 28.137ms   | 195.393us     | 144        |
+| aten::add                                            | 0.55%      | 5.211ms   | 2.84%       | 26.886ms  | 21.170us     | 20.185ms  | 3.96%       | 27.672ms   | 21.789us      | 1270       |
+| aten::sub\_                                          | 0.35%      | 3.338ms   | 1.89%       | 17.940ms  | 27.430us     | 13.464ms  | 2.64%       | 20.089ms   | 30.717us      | 654        |
+| aten::div                                            | 0.54%      | 5.147ms   | 1.54%       | 14.598ms  | 23.622us     | 14.101ms  | 2.77%       | 17.586ms   | 28.456us      | 618        |
+| elementwise_kernel<128, 2, ...>                      | 0.00%      | 0.000us   | 0.00%       | 0.000us   | 0.000us      | 16.473ms  | 3.23%       | 16.473ms   | 24.048us      | 685        |
+| aten::copy\_                                         | 0.30%      | 2.841ms   | 4.41%       | 41.785ms  | 67.943us     | 15.831ms  | 3.11%       | 15.925ms   | 25.895us      | 615        |
+| autograd::engine::evaluate_function: MulBackward0    | 0.31%      | 2.923ms   | 5.09%       | 48.272ms  | 95.399us     | 0.000us   | 0.00%       | 12.732ms   | 25.162us      | 506        |
+
+#### Summary
+
+- **Self CPU time total:** 948.116ms
+- **Self CUDA time total:** 509.430ms

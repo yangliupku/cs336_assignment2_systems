@@ -208,3 +208,46 @@ total_params (M) 120.945408
 
 - **Self CPU time total:** 948.116ms
 - **Self CUDA time total:** 509.430ms
+
+## Problem (nsys_profile)
+
+(a): For `large` model with 256 context length, we measured 139.9ms from python benchmarking, and 141.8ms from nsys. results match
+
+(b) When look at the fowards pass, the kernels taking most time are `ampere_sgemm_128x64_tn` and `ampere_sgemm_32x128_tn`.
+
+- These are sgemm (single precision general mat mul) on Ampere (A100).
+- they correspond to aten::bmm (batch mat mul)
+- they are mostly in FFN (SwiGLU) layers, but also in Atten.
+
+| Time  | Total Time | Instances | Avg        | Med        | Min        | Max        | StdDev     | Name                                                           |
+| ----- | ---------- | --------- | ---------- | ---------- | ---------- | ---------- | ---------- | -------------------------------------------------------------- |
+| 60.4% | 83.241 ms  | 217       | 383.601 μs | 203.553 μs | 201.889 μs | 1.438 ms   | 258.433 μs | ampere_sgemm_128x64_tn                                         |
+| 21.7% | 29.867 ms  | 36        | 829.630 μs | 829.876 μs | 825.828 μs | 833.796 μs | 2.086 μs   | ampere_sgemm_32x128_tn                                         |
+| 3.1%  | 4.243 ms   | 434       | 9.775 μs   | 10.592 μs  | 7.328 μs   | 12.384 μs  | 1.657 μs   | elementwise_kernel<128, 2, BinaryFunctor<MulFunctor>...>       |
+| 2.7%  | 3.734 ms   | 36        | 103.708 μs | 103.712 μs | 103.329 μs | 104.448 μs | 231 ns     | ampere_sgemm_128x128_nn                                        |
+| 1.9%  | 2.623 ms   | 72        | 36.435 μs  | 36.320 μs  | 33.536 μs  | 40.000 μs  | 2.396 μs   | vectorized_elementwise_kernel<4, BinaryFunctor<MulFunctor>...> |
+| 1.4%  | 1.921 ms   | 216       | 8.891 μs   | 8.128 μs   | 7.904 μs   | 12.544 μs  | 1.533 μs   | elementwise_kernel<128, 2, direct_copy_kernel_cuda...>         |
+| 1.2%  | 1.702 ms   | 36        | 47.290 μs  | 47.328 μs  | 46.816 μs  | 47.776 μs  | 222 ns     | ampere_sgemm_128x128_tn                                        |
+
+in backward mode, matrix multiplication is takes most time, but the size is different
+| Time | Total Time | Instances | Avg | Med | Min | Max | StdDev | GridXYZ | BlockXYZ | Name |
+|------|------------|-----------|-----|-----|-----|-----|--------|---------|----------|------|
+| 19.6% | 56.519 ms | 72 | 784.981 μs | 784.468 μs | 772.548 μs | 793.604 μs | 4.681 μs | 160 40 1 | 128 1 1 | ampere_sgemm_32x32_sliced1x4_nt |
+| 18.9% | 54.448 ms | 72 | 756.219 μs | 756.179 μs | 744.388 μs | 765.316 μs | 4.576 μs | 10 32 2 | 256 1 1 | ampere_sgemm_128x32_sliced1x4_nn |
+| 10.3% | 29.675 ms | 144 | 206.079 μs | 205.937 μs | 202.273 μs | 208.897 μs | 1.249 μs | 20 40 1 | 256 1 1 | ampere_sgemm_64x32_sliced1x4_nt |
+| 9.7% | 28.085 ms | 143 | 196.396 μs | 196.417 μs | 192.833 μs | 199.489 μs | 1.228 μs | 10 32 4 | 256 1 1 | ampere_sgemm_128x32_nn |
+| 9.5% | 27.357 ms | 36 | 759.928 μs | 758.372 μs | 748.292 μs | 768.804 μs | 4.810 μs | 40 40 1 | 256 1 1 | ampere_sgemm_32x128_nt |
+| 9.4% | 26.987 ms | 36 | 749.650 μs | 749.955 μs | 737.988 μs | 758.724 μs | 4.691 μs | 40 8 3 | 256 1 1 | ampere_sgemm_128x128_nn |
+
+(c): except for matrix multiplication, there's also 7% element wise kernels, being used in RoPE and dot product attention
+
+(d): Combining forward, backward and opt, the elementwise kernels now that about 20% of overall time.
+
+(e) Softmax takes about 36% of overall time in attention, where as matmul takes 53%.
+| Name | Start | Duration | TID | GPU | Context |
+|------|-------|----------|-----|-----|---------|
+| scaled_dot_product_attention [358.017 μs] | 38.5546s | 358.017 μs | 14874 | GPU 0 | Stream 7 |
+| computing softmax scores [73.152 μs] | 38.5546s | 73.152 μs | 14874 | GPU 0 | Stream 7 |
+| aten::where, seq = 29087, op_id = 233097 [35.296 μs] | 38.5547s | 35.296 μs | 14874 | GPU 0 | Stream 7 |
+| computing softmax [129.153 μs] | 38.5547s | 129.153 μs | 14874 | GPU 0 | Stream 7 |
+| final matmal [117.056 μs] | 38.5549s | 117.056 μs | 14874 | GPU 0 | Stream 7 |

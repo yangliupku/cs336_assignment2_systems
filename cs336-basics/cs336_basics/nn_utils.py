@@ -3,7 +3,7 @@ import contextlib
 
 
 def safe_nvtx_range(name):
-    if hasattr(torch, "cuda") and torch.cuda.is_available() and torch.cuda.nvtx.is_available():
+    if hasattr(torch, "cuda") and torch.cuda.is_available():
         return torch.cuda.nvtx.range(name)
     return contextlib.nullcontext()
 

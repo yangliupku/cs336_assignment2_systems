@@ -125,30 +125,33 @@ def benchmark(
         if mixed_precision_dtype
         else contextlib.nullcontext()
     )
-    with safe_nvtx_range("warm up"):
-        for i in range(warmup_steps):
-            with mixed_precision_context:
-                run()
-    if device == "cuda":
-        torch.cuda.synchronize()
-    elapsed_times = []
-    for i in range(num_trials):
-        start = timeit.default_timer()
-        with safe_nvtx_range(f"trail_{i}"):
-            with mixed_precision_context:
-                run()
+    try:
+        with safe_nvtx_range("warm up"):
+            for i in range(warmup_steps):
+                with mixed_precision_context:
+                    run()
         if device == "cuda":
             torch.cuda.synchronize()
-        end = timeit.default_timer()
-        elapsed_times.append((end - start) * 1000)
-    elapsed_times = np.array(elapsed_times)
-    return elapsed_times.mean(), elapsed_times.std()
+        elapsed_times = []
+        for i in range(num_trials):
+            start = timeit.default_timer()
+            with safe_nvtx_range(f"trail_{i}"):
+                with mixed_precision_context:
+                    run()
+            if device == "cuda":
+                torch.cuda.synchronize()
+            end = timeit.default_timer()
+            elapsed_times.append((end - start) * 1000)
+        elapsed_times = np.array(elapsed_times)
+        return elapsed_times.mean(), elapsed_times.std()
+    except torch.cuda.OutOfMemoryError:
+        return -1, -1
 
 
 def benchmark_basic_lm_model():
     specs = get_model_specs()
     context_lengths = [128, 256, 512, 1024]
-    device = "mps"
+    device = "cpu"
     results = []
     for k, spec in specs.items():
         for context_length in context_lengths:
@@ -165,6 +168,7 @@ def benchmark_basic_lm_model():
                 t = benchmark(run, device=device, mixed_precision_dtype=mixed_precision_dtype)
                 res["forward + backward time"] = t[0]
                 results.append(res)
+                print(res)
     return pd.DataFrame(results)
 
 

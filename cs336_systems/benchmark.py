@@ -5,6 +5,8 @@ import timeit
 import numpy as np
 from cs336_basics.optimizer import AdamW
 from torch.profiler import ProfilerActivity
+import pandas as pd
+import contextlib
 
 
 def get_model_specs():
@@ -113,19 +115,28 @@ def benchmark(
     warmup_steps: int = 3,
     num_trials: int = 10,
     device: str = "cuda",
+    mixed_precision_dtype: torch.dtype = None,
 ):
     if device == "cuda":
         assert torch.cuda.is_available()
+
+    mixed_precision_context = (
+        torch.autocast(device_type=device, dtype=mixed_precision_dtype)
+        if mixed_precision_dtype
+        else contextlib.nullcontext()
+    )
     with safe_nvtx_range("warm up"):
         for i in range(warmup_steps):
-            run()
+            with mixed_precision_context:
+                run()
     if device == "cuda":
         torch.cuda.synchronize()
     elapsed_times = []
     for i in range(num_trials):
         start = timeit.default_timer()
         with safe_nvtx_range(f"trail_{i}"):
-            run()
+            with mixed_precision_context:
+                run()
         if device == "cuda":
             torch.cuda.synchronize()
         end = timeit.default_timer()
@@ -136,15 +147,25 @@ def benchmark(
 
 def benchmark_basic_lm_model():
     specs = get_model_specs()
+    context_lengths = [128, 256, 512, 1024]
     device = "mps"
+    results = []
     for k, spec in specs.items():
-        print(f"-------{k}-------")
-        run = run_basic_lm_model(**spec, device=device, enable_backward=False)
-        t = benchmark(run, device=device)
-        print("forward", t[0])
-        run = run_basic_lm_model(**spec, device=device, enable_backward=True)
-        t = benchmark(run, device=device)
-        print("forward-backward", t[0])
+        for context_length in context_lengths:
+            for mixed_precision_dtype in [None, torch.bfloat16]:
+                res = {
+                    "model size": k,
+                    "context length": context_length,
+                    "mix precision": mixed_precision_dtype,
+                }
+                run = run_basic_lm_model(**spec, device=device, enable_backward=False)
+                t = benchmark(run, device=device, mixed_precision_dtype=mixed_precision_dtype)
+                res["forward time"] = t[0]
+                run = run_basic_lm_model(**spec, device=device, enable_backward=True)
+                t = benchmark(run, device=device, mixed_precision_dtype=mixed_precision_dtype)
+                res["forward + backward time"] = t[0]
+                results.append(res)
+    return pd.DataFrame(results)
 
 
 def cuda_profile(run: callable, num_warmups: int = 1, with_stack: bool = False):
@@ -181,15 +202,5 @@ def profile_basic_lm_model():
 
 
 if __name__ == "__main__":
-    specs = get_model_specs()
-    device = "cpu"
-    for k, spec in specs.items():
-        if k != "large":
-            continue
-        print(f"-------{k}-------")
-        # run = run_basic_lm_model(**spec, device=device, enable_backward=False)
-        # t = benchmark(run, device=device)
-        # print("forward", t[0])
-        run = run_basic_lm_model(**spec, device=device, enable_backward=True)
-        t = benchmark(run, device=device)
-        print("forward-backward", t[0])
+    df = benchmark_basic_lm_model()
+    print(df.to_markdown())

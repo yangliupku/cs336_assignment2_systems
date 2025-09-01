@@ -14,7 +14,7 @@ from torch import Tensor
 from jaxtyping import Float, Bool, Int
 
 
-from .nn_utils import softmax
+from .nn_utils import softmax, safe_nvtx_range
 
 logger = logging.getLogger(__name__)
 
@@ -29,17 +29,17 @@ class Linear(nn.Module):
             d_out: int
                 The number of output features.
         """
-        
+
         super().__init__()
         std = math.sqrt(2 / (d_in + d_out))
         self.weight: Float[Tensor, " d_out d_in"] = nn.Parameter(
-            nn.init.trunc_normal_(torch.empty(d_out, d_in), std=std, a=-3*std, b=3*std),
-            requires_grad=True
+            nn.init.trunc_normal_(torch.empty(d_out, d_in), std=std, a=-3 * std, b=3 * std),
+            requires_grad=True,
         )
 
     def forward(self, x: Float[Tensor, " ... d_in"]) -> Float[Tensor, " ... d_out"]:
         return einsum(x, self.weight, "... d_in, d_out d_in -> ... d_out")
-    
+
     def extra_repr(self):
         return f"d_out={self.weight.shape[0]}, d_in={self.weight.shape[1]}"
 
@@ -50,12 +50,12 @@ class Embedding(nn.Module):
         std = 1.0
         self.weight = nn.Parameter(
             nn.init.trunc_normal_(torch.empty(vocab_size, d_model), std=std, a=-3 * std, b=3 * std),
-            requires_grad=True
+            requires_grad=True,
         )
-    
+
     def forward(self, token_ids: Int[Tensor, " ..."]) -> Float[Tensor, " ... d_model"]:
         return self.weight[token_ids, :]
-    
+
     def extra_repr(self):
         return f"vocab_size={self.weight.shape[0]}, d={self.weight.shape[1]}"
 
@@ -98,14 +98,15 @@ class RMSNorm(nn.Module):
         # manually upcast the input to fp32 here to prevent overflow when you
         # square the input.
         # https://github.com/pytorch/pytorch/issues/66707
-        in_dtype = x.dtype
+        with safe_nvtx_range("RMSNorm"):
+            in_dtype = x.dtype
 
-        x = x.to(torch.float32)
-        rms = torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
-        x = x * rms
+            x = x.to(torch.float32)
+            rms = torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
+            x = x * rms
 
-        return (self.weight * x).to(in_dtype)
-    
+            return (self.weight * x).to(in_dtype)
+
     def extra_repr(self):
         return f"hidden_size={self.weight.shape[0]}, eps={self.eps}"
 
@@ -115,15 +116,18 @@ class RotaryEmbedding(nn.Module):
         super().__init__()
         self.register_buffer(
             "_freq_cis_cache",
-            RotaryEmbedding._init_cache(context_length, dim, theta), persistent=False
+            RotaryEmbedding._init_cache(context_length, dim, theta),
+            persistent=False,
         )
-    
+
     @staticmethod
-    def _init_cache(context_length: int, dim: int, theta: float) -> Float[Tensor, " 2 context_length half_dim"]:
+    def _init_cache(
+        context_length: int, dim: int, theta: float
+    ) -> Float[Tensor, " 2 context_length half_dim"]:
         assert dim % 2 == 0
 
         d = torch.arange(0, dim, 2) / dim
-        freqs = theta ** -d
+        freqs = theta**-d
         t = torch.arange(context_length)
 
         freqs = einsum(t, freqs, "t, f -> t f")
@@ -131,23 +135,31 @@ class RotaryEmbedding(nn.Module):
         cos, sin = torch.cos(freqs), torch.sin(freqs)
         return torch.stack((cos, sin))
 
-    def forward(self, x: Float[Tensor, " ... seq d"], pos_ids: Int[Tensor, " ... seq"]) -> Float[Tensor, " ... seq d"]:
-        x1, x2 = rearrange(x, '... (half_d xy) -> xy ... half_d', xy=2)
+    def forward(
+        self, x: Float[Tensor, " ... seq d"], pos_ids: Int[Tensor, " ... seq"]
+    ) -> Float[Tensor, " ... seq d"]:
+        x1, x2 = rearrange(x, "... (half_d xy) -> xy ... half_d", xy=2)
 
         # Standard
         # cos, sin = self._freq_cis_cache[:, pos_ids, :]
 
         # einx
-        cos, sin = einx.get_at('cos_sin [pos] half_dim, ... -> cos_sin ... half_dim', self._freq_cis_cache, pos_ids)
+        cos, sin = einx.get_at(
+            "cos_sin [pos] half_dim, ... -> cos_sin ... half_dim", self._freq_cis_cache, pos_ids
+        )
 
         # 2D rotation matrix applied to pairs in x
         x1_rot = cos * x1 - sin * x2
         x2_rot = sin * x1 + cos * x2
-        result = einx.rearrange('... x_half, ... x_half -> ... (x_half (1 + 1))', x1_rot, x2_rot).contiguous()
+        result = einx.rearrange(
+            "... x_half, ... x_half -> ... (x_half (1 + 1))", x1_rot, x2_rot
+        ).contiguous()
         return result
-    
+
     def extra_repr(self):
-        return f"context_length={self._freq_cis_cache.shape[0]}, dim/2={self._freq_cis_cache.shape[1]}"
+        return (
+            f"context_length={self._freq_cis_cache.shape[0]}, dim/2={self._freq_cis_cache.shape[1]}"
+        )
 
 
 class BasicsTransformerLM(nn.Module):
@@ -187,7 +199,9 @@ class BasicsTransformerLM(nn.Module):
     ):
         # Store the model configuration for serialization / deserialization
         self.config = {
-            k: v for k, v in locals().items() if k != "self" and not (k.startswith("__") and k.endswith("__"))
+            k: v
+            for k, v in locals().items()
+            if k != "self" and not (k.startswith("__") and k.endswith("__"))
         }
         super().__init__()
         self.vocab_size = vocab_size
@@ -196,9 +210,7 @@ class BasicsTransformerLM(nn.Module):
         self.token_embeddings = Embedding(vocab_size, d_model)
         d_head = d_model // num_heads
         self.positional_encoder = RotaryEmbedding(
-            context_length=context_length,
-            dim=d_head,
-            theta=rope_theta
+            context_length=context_length, dim=d_head, theta=rope_theta
         )
         self.layers = nn.ModuleList(
             [
@@ -228,7 +240,9 @@ class BasicsTransformerLM(nn.Module):
 
         return n_params
 
-    def forward(self, x: Int[Tensor, " ... sequence_length"]) -> Float[Tensor, " ... sequence_length vocab_size"]:
+    def forward(
+        self, x: Int[Tensor, " ... sequence_length"]
+    ) -> Float[Tensor, " ... sequence_length vocab_size"]:
         """
         Args:
             x: Input IDs for language modeling.
@@ -278,7 +292,7 @@ class BasicsTransformerLM(nn.Module):
         """
         if x.dim() == 1:
             x = x.unsqueeze(0)
-            
+
         original_sequence_length = x.size(-1)
         for _ in range(max_new_tokens):
             # Take the last `context_length` tokens if the input is
@@ -394,7 +408,8 @@ class SwiGLU(nn.Module):
         self.w3 = Linear(d_model, d_ff)
 
     def forward(self, x):
-        return self.w2(silu(self.w1(x)) * self.w3(x))
+        with safe_nvtx_range("SwiGLU"):
+            return self.w2(silu(self.w1(x)) * self.w3(x))
 
 
 def scaled_dot_product_attention(
@@ -422,14 +437,18 @@ def scaled_dot_product_attention(
     """
 
     d_k = K.shape[-1]
-    attention_scores = einsum(Q, K, "... query d_k, ... key d_k -> ... query key") / math.sqrt(d_k)
+    with safe_nvtx_range("compute attn scores"):
+        attention_scores = einsum(Q, K, "... query d_k, ... key d_k -> ... query key") / math.sqrt(
+            d_k
+        )
 
     if mask is not None:
-        attention_scores = torch.where(mask, attention_scores, float("-inf"))
-
-    attention_weights = softmax(attention_scores, dim=-1)  # Softmax over the key dimension
-
-    return einsum(attention_weights, V, "... query key, ... key d_v ->  ... query d_v")
+        with safe_nvtx_range("compute mask"):
+            attention_scores = torch.where(mask, attention_scores, float("-inf"))
+    with safe_nvtx_range("compute softmax"):
+        attention_weights = softmax(attention_scores, dim=-1)  # Softmax over the key dimension
+    with safe_nvtx_range("final matmul"):
+        return einsum(attention_weights, V, "... query key, ... key d_v ->  ... query d_v")
 
 
 class CausalMultiHeadSelfAttention(nn.Module):
@@ -475,7 +494,11 @@ class CausalMultiHeadSelfAttention(nn.Module):
 
         self.positional_encoder = positional_encoder  # RoPE
 
-    def forward(self, x: Float[Tensor, " ... seq d_k"], token_positions: Int[Tensor, " ... seq"] | None = None) -> Float[Tensor, " ... seq d_v"]:
+    def forward(
+        self,
+        x: Float[Tensor, " ... seq d_k"],
+        token_positions: Int[Tensor, " ... seq"] | None = None,
+    ) -> Float[Tensor, " ... seq d_v"]:
         """
         Args:
             x: The input to perform multi-headed self-attention on.
@@ -498,30 +521,36 @@ class CausalMultiHeadSelfAttention(nn.Module):
         )  # fmt: skip
 
         if token_positions is None:
-            token_positions = einx.rearrange("seq -> b... seq", torch.arange(sequence_length, device=x.device), b=[1] * len(b))
+            token_positions = einx.rearrange(
+                "seq -> b... seq", torch.arange(sequence_length, device=x.device), b=[1] * len(b)
+            )
 
         # Duplicate token positions for each head
         token_positions = rearrange(token_positions, "... seq -> ... 1 seq")
-
-        Q = self.positional_encoder(Q, token_positions)
-        K = self.positional_encoder(K, token_positions)
+        with safe_nvtx_range("RoPE"):
+            Q = self.positional_encoder(Q, token_positions)
+            K = self.positional_encoder(K, token_positions)
 
         # Construct causal mask
         seq = torch.arange(sequence_length, device=x.device)
-        qi = einx.rearrange('query -> b... 1 query 1', seq, b=[1] * len(b))
-        kj = einx.rearrange('key   -> b... 1 1   key', seq, b=[1] * len(b))
+        qi = einx.rearrange("query -> b... 1 query 1", seq, b=[1] * len(b))
+        kj = einx.rearrange("key   -> b... 1 1   key", seq, b=[1] * len(b))
         causal_mask = qi >= kj  # (query, key)
 
         # Shape: (..., num_heads, sequence_length, d_k)
-        attn_output = scaled_dot_product_attention(K=K, Q=Q, V=V, mask=causal_mask)
+        with safe_nvtx_range("scaled_dot_product_attention"):
+            attn_output = scaled_dot_product_attention(K=K, Q=Q, V=V, mask=causal_mask)
 
         # Concatenate the attention output from all heads.
         # (..., sequence_length, num_heads * d_v).
-        attn_output = rearrange(attn_output, "batch heads seq d_v -> batch seq (heads d_v)").contiguous()
+        attn_output = rearrange(
+            attn_output, "batch heads seq d_v -> batch seq (heads d_v)"
+        ).contiguous()
 
         # Apply the output projection
         output = self.output_proj(attn_output)
         return output
+
 
 def silu(x: torch.Tensor):
     return x * torch.sigmoid(x)

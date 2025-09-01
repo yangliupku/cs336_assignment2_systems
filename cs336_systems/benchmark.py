@@ -1,11 +1,10 @@
 from cs336_basics.model import BasicsTransformerLM
 import torch
-from cs336_basics.nn_utils import cross_entropy
+from cs336_basics.nn_utils import cross_entropy, safe_nvtx_range
 import timeit
 import numpy as np
 from cs336_basics.optimizer import AdamW
 from torch.profiler import ProfilerActivity
-import torch.cuda.nvtx as nvtx
 
 
 def get_model_specs():
@@ -77,7 +76,7 @@ def run_basic_lm_model(
     enable_backward: bool = True,
     device: str = None,
 ) -> callable:
-    with nvtx.range("define model"):
+    with safe_nvtx_range("define model"):
         model = BasicsTransformerLM(
             vocab_size=vocab_size,
             context_length=context_length,
@@ -87,23 +86,23 @@ def run_basic_lm_model(
             d_ff=d_ff,
             rope_theta=rope_theta,
         ).to(device)
-    with nvtx.range("define optimizer"):
+    with safe_nvtx_range("define optimizer"):
         opt = AdamW(params=model.parameters())
 
-    with nvtx.range("define data"):
+    with safe_nvtx_range("define data"):
         inputs = torch.randint(0, vocab_size, (batch_size, context_length), device=device)
         lables = torch.randint(0, vocab_size, (batch_size, context_length), device=device)
 
     def run():
-        with nvtx.range("forward"):
+        with safe_nvtx_range("forward"):
             logits = model(inputs)
         if enable_backward:
             opt.zero_grad()
-            with nvtx.range("loss"):
+            with safe_nvtx_range("loss"):
                 loss = cross_entropy(logits, lables)
-            with nvtx.range("backward"):
+            with safe_nvtx_range("backward"):
                 loss.backward()
-            with nvtx.range("opt step"):
+            with safe_nvtx_range("opt step"):
                 opt.step()
 
     return run
@@ -117,7 +116,7 @@ def benchmark(
 ):
     if device == "cuda":
         assert torch.cuda.is_available()
-    with nvtx.range("warm up"):
+    with safe_nvtx_range("warm up"):
         for i in range(warmup_steps):
             run()
     if device == "cuda":
@@ -125,7 +124,7 @@ def benchmark(
     elapsed_times = []
     for i in range(num_trials):
         start = timeit.default_timer()
-        with nvtx.range(f"trail_{i}"):
+        with safe_nvtx_range(f"trail_{i}"):
             run()
         if device == "cuda":
             torch.cuda.synchronize()

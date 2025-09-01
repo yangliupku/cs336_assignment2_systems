@@ -159,8 +159,9 @@ def benchmark_basic_lm_model():
                 res = {
                     "model size": k,
                     "context length": context_length,
-                    "mix precision": mixed_precision_dtype,
+                    "mix precision": mixed_precision_dtype or "NA",
                 }
+                spec["context_length"] = context_length
                 run = run_basic_lm_model(**spec, device=device, enable_backward=False)
                 t = benchmark(run, device=device, mixed_precision_dtype=mixed_precision_dtype)
                 res["forward time"] = t[0]

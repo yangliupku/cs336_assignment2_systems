@@ -180,7 +180,7 @@ def benchmark_basic_lm_model():
                     device=device,
                     mixed_precision_dtype=mixed_precision_dtype,
                     enable_cuda_memory_profile=True,
-                    cuda_memory_profile_output_fname=f"memory_snapshot_2p7B_{context_length}_{'with' if mixed_precision_dtype else 'wo'}mp.pickle",
+                    cuda_memory_profile_output_fname=f"memory_snapshot_2p7B_{context_length}_{'with' if mixed_precision_dtype else 'wo'}mp_f.pickle",
                 )
                 res["forward time"] = t[0]
                 run = run_basic_lm_model(**spec, device=device, enable_backward=True)
@@ -189,7 +189,7 @@ def benchmark_basic_lm_model():
                     device=device,
                     mixed_precision_dtype=mixed_precision_dtype,
                     enable_cuda_memory_profile=True,
-                    cuda_memory_profile_output_fname=f"memory_snapshot_2p7B_{context_length}_{'with' if mixed_precision_dtype else 'wo'}mp.pickle",
+                    cuda_memory_profile_output_fname=f"memory_snapshot_2p7B_{context_length}_{'with' if mixed_precision_dtype else 'wo'}mp_fb.pickle",
                 )
                 res["forward + backward time"] = t[0]
                 results.append(res)

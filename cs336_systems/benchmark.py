@@ -116,6 +116,8 @@ def benchmark(
     num_trials: int = 10,
     device: str = "cuda",
     mixed_precision_dtype: torch.dtype = None,
+    enable_cuda_memory_profile: bool = False,
+    cuda_memory_profile_output_fname: str = "memory_snapshot.pickle",
 ):
     if device == "cuda":
         assert torch.cuda.is_available()
@@ -125,6 +127,7 @@ def benchmark(
         if mixed_precision_dtype
         else contextlib.nullcontext()
     )
+    should_enable_cuda_memory_profile = enable_cuda_memory_profile and (device == "cuda")
     try:
         with safe_nvtx_range("warm up"):
             for i in range(warmup_steps):
@@ -133,15 +136,22 @@ def benchmark(
         if device == "cuda":
             torch.cuda.synchronize()
         elapsed_times = []
+        if should_enable_cuda_memory_profile:
+            torch.cuda.memory._record_memory_history(max_entries=1000000)
+
         for i in range(num_trials):
             start = timeit.default_timer()
             with safe_nvtx_range(f"trail_{i}"):
                 with mixed_precision_context:
                     run()
+
             if device == "cuda":
                 torch.cuda.synchronize()
             end = timeit.default_timer()
             elapsed_times.append((end - start) * 1000)
+        if should_enable_cuda_memory_profile:
+            torch.cuda.memory._dump_snapshot(filename=cuda_memory_profile_output_fname)
+            torch.cuda.memory._record_memory_history(enabled=None)
         elapsed_times = np.array(elapsed_times)
         return elapsed_times.mean(), elapsed_times.std()
     except torch.cuda.OutOfMemoryError:
@@ -150,10 +160,12 @@ def benchmark(
 
 def benchmark_basic_lm_model():
     specs = get_model_specs()
-    context_lengths = [128, 256, 512, 1024]
+    context_lengths = [128, 256, 512]
     device = "cpu"
     results = []
     for k, spec in specs.items():
+        if k != "2.7B":
+            continue
         for context_length in context_lengths:
             for mixed_precision_dtype in [None, torch.bfloat16]:
                 res = {
@@ -163,7 +175,13 @@ def benchmark_basic_lm_model():
                 }
                 spec["context_length"] = context_length
                 run = run_basic_lm_model(**spec, device=device, enable_backward=False)
-                t = benchmark(run, device=device, mixed_precision_dtype=mixed_precision_dtype)
+                t = benchmark(
+                    run,
+                    device=device,
+                    mixed_precision_dtype=mixed_precision_dtype,
+                    enable_cuda_memory_profile=True,
+                    cuda_memory_profile_output_fname=f"memory_snapshot_2p7B_{context_length}.pickle",
+                )
                 res["forward time"] = t[0]
                 run = run_basic_lm_model(**spec, device=device, enable_backward=True)
                 t = benchmark(run, device=device, mixed_precision_dtype=mixed_precision_dtype)
